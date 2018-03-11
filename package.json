@@ -1,0 +1,20 @@
+{
+  "name": "material",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "firebase": "^4.11.0",
+    "material-ui": "^0.20.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-firebaseui": "^1.1.9",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
