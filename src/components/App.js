@@ -1,39 +1,29 @@
 import React, { Component } from 'react';
 
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+// import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
 import '../assets/stylesheets/App.css';
 
-import { LoginPage } from './pages/LoginPage';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import AppBar from 'material-ui/AppBar';
 
-const Home = () => (
-	<div>
-		<h2>Home</h2>
-	</div>
-);
+// import { LoginPage } from './pages/LoginPage';
+import { PeachList } from './pages/PeachList';
 
 class App extends Component {
+	state = { title: 'Peach' };
 	render() {
 		return (
-			<div className="App">
-				<Router>
-					<div>
-						<ul>
-							<li>
-								<Link to="/">Home</Link>
-							</li>
-							<li>
-								<Link to="/login">Login</Link>
-							</li>
-						</ul>
+			<MuiThemeProvider>
+				<div className="App">
+					<AppBar
+						title={this.state.title}
+						iconClassNameRight="muidocs-icon-navigation-expand-more"
+					/>
 
-						<hr />
-
-						<Route exact path="/" component={Home} />
-						<Route path="/login" component={LoginPage} />
-					</div>
-				</Router>
-			</div>
+					<PeachList />
+				</div>
+			</MuiThemeProvider>
 		);
 	}
 }
