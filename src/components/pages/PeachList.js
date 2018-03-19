@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PeachForm from './PeachForm'
 import PeachItem from './PeachItem'
 // Material UI imports
-import Paper from 'material-ui/Paper';
+import {List, ListItem} from 'material-ui/List';
 
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
@@ -15,6 +15,14 @@ const button = {
 	right: 0,
 	margin: 10
 }
+
+const styles = {
+  root: {
+    display: 'flex',
+		alignItems: 'flex-start',
+		flexWrap: 'wrap'
+  }
+};
 
 export class PeachList extends Component {
 	constructor(props) {
@@ -40,6 +48,7 @@ export class PeachList extends Component {
 	handleClose = () => {
 		this.setState({open: false});
 	}
+
 	onChange = (id, event) => {
 		const value = event.target.value;
 		const newValues = {}
@@ -69,7 +78,6 @@ export class PeachList extends Component {
 		 	open: false
 		})
 	}
-
 	onUpvote = (id) => {
 		const newPeach = { ...this.state.peaches[id], score: this.state.peaches[id].score + 1 };
 		const newPeaches = [...this.state.peaches];
@@ -95,14 +103,15 @@ export class PeachList extends Component {
 
 		return (
 				<div>
-					<Paper style={{padding: 60}} zDepth={0}>
+					<List style={styles.root}>
 						{ this.state.peaches.map((peach, id) => (
-							<PeachItem peach={peach} id={id} key={peach.title+peach.text.length} onUpvote={this.onUpvote}/>)
+								<PeachItem peach={peach} id={id} key={peach.title+peach.text.length} onUpvote={this.onUpvote} />
+							)
 						)}
+					</List>
 						<FloatingActionButton style={button}>
 							<ContentAdd onClick={this.handleOpen}/>
 						</FloatingActionButton>
-					</Paper>
 
 					<PeachForm
 						actions={actions}
