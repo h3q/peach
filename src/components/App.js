@@ -19,7 +19,6 @@ import { service } from '../firebaseService';
 import { Login } from './Login';
 
 import '../assets/stylesheets/App.css';
-
 import PeachList from './pages/PeachList';
 
 import User from '../models/User.js';
@@ -66,6 +65,7 @@ class App extends Component {
 			<MuiThemeProvider>
 				<div className="app">
 					<AppBar
+						title="Peach"
 						showMenuIconButton={false}
 						iconElementRight={
 							user && (
@@ -78,7 +78,7 @@ class App extends Component {
 						}
 					/>
 					{!user && <Login service={service} />}
-					{user && <PeachList />}
+					{user && <PeachList user={user.uid}/>}
 				</div>
 			</MuiThemeProvider>
 		);
