@@ -1,27 +1,27 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
-import PeachForm from "./PeachForm";
-import PeachItem from "./PeachItem";
-import Peach from "../../models/Peach";
+import PeachForm from './PeachForm';
+import PeachItem from './PeachItem';
+import Peach, { findAll as findAllPeach } from '../../models/Peach';
 
 // Material UI imports
-import List from "material-ui/List";
+import List from 'material-ui/List';
 
-import FloatingActionButton from "material-ui/FloatingActionButton";
-import ContentAdd from "material-ui/svg-icons/content/add";
-import FlatButton from "material-ui/FlatButton";
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
+import FlatButton from 'material-ui/FlatButton';
 
 const button = {
-  position: "absolute",
+  position: 'absolute',
   bottom: 0,
   right: 0,
   margin: 10
 };
 const styles = {
   root: {
-    display: "flex",
-    alignItems: "flex-start",
-    flexWrap: "wrap"
+    display: 'flex',
+    alignItems: 'flex-start',
+    flexWrap: 'wrap'
   }
 };
 
@@ -56,7 +56,6 @@ export class PeachList extends Component {
       likes: [],
       creationDate: Date.now()
     });
-    peach.save();
     this.setState(prevState => ({
       peaches: [...prevState.peaches, peach],
       open: false
@@ -72,18 +71,28 @@ export class PeachList extends Component {
       open: false
     });
   };
-  onUpvote = (id, uid) => {
-    const newPeach = this.state.peaches[id];
-    const newPeaches = [...this.state.peaches];
+  onUpvote = index => {
+    const { peaches } = this.state;
 
-    if (newPeach.likes.indexOf(uid) === -1) {
-      newPeach.likes.push(uid);
-      newPeaches[id] = newPeach;
+    const { user } = this.props;
 
-      this.setState({
-        peaches: newPeaches
-      });
+    const peach = peaches[index];
+
+    const likeIndex = peach.likes.indexOf(user);
+
+    if (likeIndex === -1) {
+      peach.likes.push(user);
+    } else {
+      peach.likes.splice(likeIndex, 1);
     }
+
+    this.setState({ peaches: [...peaches] });
+  };
+
+  componentWillMount = () => {
+    findAllPeach().then(peaches => {
+      this.setState({ peaches: peaches });
+    });
   };
 
   render() {
@@ -99,13 +108,13 @@ export class PeachList extends Component {
     return (
       <div>
         <List style={styles.root}>
-          {this.state.peaches.map((peach, id) => (
+          {this.state.peaches.map((peach, index) => (
             <PeachItem
               peach={peach}
-              style={{ order: peach.likes.length }}
-              id={id}
-              key={peach.title + peach.description.length}
-              uid={this.props.uid}
+              id={index}
+              key={index}
+              style={{ order: peach.likes.length * -1 }}
+              user={this.props.user}
               onUpvote={this.onUpvote}
             />
           ))}
