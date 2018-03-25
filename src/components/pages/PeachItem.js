@@ -3,6 +3,20 @@ import React, { Component } from "react";
 import { Card, CardActions, CardHeader, CardText } from "material-ui/Card";
 import FlatButton from "material-ui/FlatButton";
 import Chip from "material-ui/Chip";
+import FavoriteIcon from "material-ui/svg-icons/action/favorite";
+import FavoriteBorderIcon from "material-ui/svg-icons/action/favorite-border";
+
+const Like = ({ likes = [], uid }) => {
+  const number = likes.length;
+  const isLiked = likes.indexOf(uid) !== -1;
+  return (
+    <div>
+      {!isLiked && <FavoriteBorderIcon />}
+      {isLiked && <FavoriteIcon />}
+      <span>{number}</span>
+    </div>
+  );
+};
 
 class PeachItem extends Component {
   onPeachUpvote = () => {
@@ -22,7 +36,7 @@ class PeachItem extends Component {
         />
 
         <CardText style={{ wordBreak: "break-all" }} expandable={true}>
-          {peach.text}
+          {peach.description}
         </CardText>
 
         {/* <div style={{display: "flex", justifyContent: "space-evenly"}}>
@@ -31,12 +45,19 @@ class PeachItem extends Component {
           ))}
         </div> */}
 
-        <CardActions style={{ flex: 1, justifyContent: "flex-end" }}>
+        <CardActions
+          style={{
+            flex: 1,
+            justifyContent: "flex-end",
+            display: "flex",
+            alignItems: "center"
+          }}>
           <FlatButton
             label="Pluzun"
             primary={true}
             onClick={this.onPeachUpvote}
           />
+          <Like likes={peach.likes} uid={this.props.uid} />
         </CardActions>
       </Card>
     );
