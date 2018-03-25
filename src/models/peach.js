@@ -3,7 +3,7 @@ import { store } from '../firebaseService';
 const collection = store.collection('peaches');
 
 export class Peach {
-	constructor({ title = '', description = '', likes = [], links = [] }) {
+	constructor({ uid, title = '', description = '', likes = [], links = [] }) {
 		Object.assign(this, {
 			title,
 			description,
@@ -11,9 +11,11 @@ export class Peach {
 			links,
 			created: Date.now()
 		});
-		collection
-			.add({ ...this })
-			.then(({ id }) => Object.assign(this, { uid: id }));
+		if (!uid) {
+			collection
+				.add({ ...this })
+				.then(({ id }) => Object.assign(this, { uid: id }));
+		}
 	}
 	delete() {
 		return collection.doc(this.uid).delete();
