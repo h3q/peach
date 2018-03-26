@@ -4,9 +4,14 @@ const collection = store.collection('users');
 
 export class User {
 	constructor({ uid, displayName, photoURL, email }) {
-		Object.assign(this, { uid, displayName, photoURL, email });
-		collection
-			.doc(uid)
+		Object.assign(this, {
+			doc: collection.doc(uid),
+			uid,
+			displayName,
+			photoURL,
+			email
+		});
+		this.doc
 			.get()
 			.then(doc => !doc.exists && this.save())
 			.catch(error => {

@@ -1,39 +1,50 @@
 import { store } from '../firebaseService';
 
+import { collection as users } from './User';
+
 const collection = store.collection('peaches');
 
 export class Peach {
-	constructor({ uid, title = '', description = '', likes = [], links = [] }) {
+	constructor({
+		id,
+		title = '',
+		description = '',
+		likes = [],
+		links = [],
+		author
+	}) {
+		const doc = id ? collection.doc(id) : collection.doc();
 		Object.assign(this, {
+			doc,
+			id: id || doc.id,
 			title,
 			description,
 			likes,
 			links,
-			created: Date.now()
+			author,
+			created: new Date()
 		});
-		if (!uid) {
-			collection
-				.add({ ...this })
-				.then(({ id }) => Object.assign(this, { uid: id }));
-		}
 	}
-	delete() {
-		return collection.doc(this.uid).delete();
-	}
-	save() {
-		if (!this.uid) console.error('not ready yet #DEBUG');
-		const { uid, title, description, likes, links, created } = this;
-		return collection
-			.doc(uid)
-			.set({ title, description, likes, links, created });
-	}
+
+	delete = () => this.doc.delete();
+
+	save = () => this.doc.set(this.toStorable());
+
+	toStorable = () => ({
+		title: this.title,
+		description: this.description,
+		likes: this.likes,
+		links: this.links,
+		created: this.created,
+		author: this.author
+	});
 }
 
 export const findAll = () => {
 	return collection.get().then(peachesSnapshot => {
 		const peaches = [];
 		peachesSnapshot.forEach(doc =>
-			peaches.push(new Peach({ ...doc.data(), uid: doc.id }))
+			peaches.push(new Peach({ ...doc.data(), id: doc.id }))
 		);
 		return peaches;
 	});
