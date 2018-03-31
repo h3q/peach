@@ -1,28 +1,18 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import PeachCreator from './PeachCreator';
 import PeachItem from './PeachItem';
 
-import Peach, { findAll as fetchAllPeach } from '../models/Peach';
+import { findAll as fetchAllPeach } from '../models/Peach';
 
 // Material UI imports
 import List from 'material-ui/List';
-
+import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
-import FlatButton from 'material-ui/FlatButton';
 
-import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
-
-const styles = {
-	root: {
-		display: 'flex',
-		alignItems: 'flex-start',
-		flexWrap: 'wrap'
-	}
-};
-
-// TODO: add peach'likes to css rule "flex-order" (?), in order to sort peaches by descending likess
+import Page from './Page';
 
 export class PeachList extends Component {
 	constructor() {
@@ -32,6 +22,14 @@ export class PeachList extends Component {
 			peaches: []
 		};
 	}
+
+	static contextTypes = {
+		muiTheme: PropTypes.object
+	};
+
+	static propTypes = {
+		user: PropTypes.object
+	};
 
 	handleOpen = () => {
 		this.setState({ open: true });
@@ -59,8 +57,13 @@ export class PeachList extends Component {
 		const { peaches } = this.state;
 
 		return (
-			<div>
-				<Toolbar style={{ justifyContent: 'flex-end' }}>
+			<Page>
+				<Toolbar
+					style={{
+						justifyContent: 'flex-end',
+						backgroundColor: this.context.muiTheme.palette.primary2Color
+					}}
+				>
 					<ToolbarGroup>
 						<FloatingActionButton
 							onClick={this.handleOpen}
@@ -90,7 +93,7 @@ export class PeachList extends Component {
 						user={user}
 					/>
 				)}
-			</div>
+			</Page>
 		);
 	}
 }

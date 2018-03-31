@@ -1,7 +1,5 @@
 import { store } from '../firebaseService';
 
-import { collection as users } from './User';
-
 const collection = store.collection('peaches');
 
 export class Peach {

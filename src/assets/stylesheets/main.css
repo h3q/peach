@@ -4,6 +4,11 @@ body,
 .app {
 	height: 100%;
 }
+
+.app {
+	display: flex;
+	flex-direction: column;
+}
 .peaches {
 	display: flex;
 	flex-wrap: wrap;
@@ -18,5 +23,9 @@ body,
 	}
 	.peaches > div {
 		width: 100%;
+	}
+
+	.peaches > div {
+		margin: 0;
 	}
 }

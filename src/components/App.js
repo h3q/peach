@@ -4,10 +4,6 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 import AppBar from 'material-ui/AppBar';
 
-import FlatButton from 'material-ui/FlatButton';
-
-import { grey50 } from 'material-ui/styles/colors';
-
 import { service } from '../firebaseService';
 import { Login } from './Login';
 
@@ -43,8 +39,8 @@ class App extends Component {
 	render() {
 		const { user } = this.state;
 		return (
-			<div className="app" style={{ backgroundColor: grey50 }}>
-				<MuiThemeProvider>
+			<MuiThemeProvider>
+				<div className="app">
 					<AppBar
 						title="Peach"
 						showMenuIconButton={false}
@@ -60,8 +56,8 @@ class App extends Component {
 					/>
 					{!user && <Login service={service} />}
 					{user && <PeachList user={user} />}
-				</MuiThemeProvider>
-			</div>
+				</div>
+			</MuiThemeProvider>
 		);
 	}
 }

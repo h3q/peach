@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 
 import Dialog from 'material-ui/Dialog';
+import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
+import IconButton from 'material-ui/IconButton';
+import CloseIcon from 'material-ui/svg-icons/navigation/close';
+import { fullWhite } from 'material-ui/styles/colors';
 
 import Peach from '../models/Peach';
+
+import LinkPicker from './LinkPicker';
 
 class PeachCreator extends Component {
 	constructor() {
@@ -37,34 +43,49 @@ class PeachCreator extends Component {
 		this.setState({ description: event.target.value });
 
 	render() {
-		const { onSubmit, peach, close } = this.props;
+		const { close } = this.props;
 		return (
 			<Dialog
-				title="Format you Peach, fella."
+				title={
+					<AppBar
+						title="Format you Peach, fella."
+						showMenuIconButton={false}
+						onTitleClick={close}
+						iconElementRight={
+							<IconButton
+								tooltip="Close"
+								touch={true}
+								tooltipPosition="top-center"
+								onClick={close}
+							>
+								<CloseIcon color={fullWhite} />
+							</IconButton>
+						}
+					/>
+				}
 				actions={this.getActions()}
 				modal={false}
 				open
-				autoScrollBodyContent={true}
+				autoScrollBodyContent
 				onRequestClose={close}
 			>
-				What are you going to show to those lovely morons of yours?
 				<div style={{ display: 'flex', flexDirection: 'column' }}>
 					<TextField
+						fullWidth
 						onChange={this.onTitleChange}
-						hintText="Peach title"
+						floatingLabelText="Title"
 						underlineShow={true}
 					/>
 					<TextField
+						fullWidth
 						onChange={this.onDescriptionChange}
-						hintText="Peach description"
+						floatingLabelText="Description"
 						underlineShow={true}
 						multiLine={true}
-						rows={2}
+						rows={1}
 						rowsMax={5}
 					/>
-					{/*
-            * TODO: add links picker
-            */}
+					<LinkPicker onChange={this.onLinksChange} />
 				</div>
 			</Dialog>
 		);
