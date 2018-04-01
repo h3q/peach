@@ -9,8 +9,18 @@ import Chip from 'material-ui/Chip';
 
 import { fullWhite } from 'material-ui/styles/colors';
 
+const URL_PATTERN = new RegExp(
+	'^(https?:\\/\\/)?' + // protocol
+	'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
+	'((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+	'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+	'(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+		'(\\#[-a-z\\d_]*)?$',
+	'i'
+);
+
 export const LinksContainer = ({ links, removeLink }) => (
-	<div style={{ display: 'flex', flexWrap: 'wrap' }}>
+	<div style={{ display: 'flex', flexWrap: 'wrap', maxHeight: 100 }}>
 		{links.map((link, index) => (
 			<Link url={link} removeLink={removeLink} key={index} index={index} />
 		))}
@@ -24,6 +34,13 @@ class Link extends Component {
 		muiTheme: PropTypes.object
 	};
 
+	getShortenedURL = () => {
+		const { url } = this.props;
+		if (url.length <= 16) {
+			return url;
+		}
+		return `${url.slice(0, 6)}..${url.slice(-6)}`;
+	};
 	render() {
 		const { url } = this.props;
 		return (
@@ -39,7 +56,7 @@ class Link extends Component {
 					href={url}
 					target="_blank"
 				>
-					{url}
+					{this.getShortenedURL()}
 				</a>
 			</Chip>
 		);
@@ -55,7 +72,9 @@ export class LinkPicker extends Component {
 		};
 	}
 	onKeyPress = event => event.key === 'Enter' && this.addLink();
-	addLink = () =>
+
+	addLink = () => {
+		if (!this.isURL()) return;
 		this.setState(
 			({ links }) =>
 				links.indexOf(this.state.value) < 0 && {
@@ -63,6 +82,7 @@ export class LinkPicker extends Component {
 					value: ''
 				}
 		);
+	};
 	removeLink = removedIndex =>
 		this.setState(({ links }) => ({
 			links: links.filter((link, index) => removedIndex !== index)
@@ -70,30 +90,28 @@ export class LinkPicker extends Component {
 
 	onURLChange = event => this.setState({ value: event.target.value });
 
-	isURL() {
-		const urlPattern = new RegExp(
-			'^(https?:\\/\\/)?' + // protocol
-			'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
-			'((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-			'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-			'(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-				'(\\#[-a-z\\d_]*)?$',
-			'i'
-		);
-		return urlPattern.test(this.state.value);
-	}
+	isURL = () => URL_PATTERN.test(this.state.value);
+
 	render() {
 		const { value, links } = this.state;
 		return (
 			<div>
-				<TextField
-					floatingLabelText="URL"
-					onChange={this.onURLChange}
-					onKeyPress={this.onKeyPress}
-					value={value}
-					errorText={value && !this.isURL(value) && 'Not valid URL'}
-				/>
-				<FlatButton secondary icon={<AddIcon />} onClick={this.addLink} />
+				<div style={{ display: 'flex', width: '100%', alignItems: 'flex-end' }}>
+					<TextField
+						style={{ flex: 1 }}
+						floatingLabelText="URL"
+						onChange={this.onURLChange}
+						onKeyPress={this.onKeyPress}
+						value={value}
+						errorText={value && !this.isURL(value) && 'Not valid URL'}
+					/>
+					<FlatButton
+						secondary
+						style={{ minWidth: 36, borderRadius: '100%', margin: 4 }}
+						icon={<AddIcon />}
+						onClick={this.addLink}
+					/>
+				</div>
 				<LinksContainer links={links} removeLink={this.removeLink} />
 			</div>
 		);
