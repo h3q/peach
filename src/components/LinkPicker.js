@@ -22,7 +22,12 @@ const URL_PATTERN = new RegExp(
 export const LinksContainer = ({ links, removeLink }) => (
 	<div style={{ display: 'flex', flexWrap: 'wrap', maxHeight: 100 }}>
 		{links.map((link, index) => (
-			<Link url={link} removeLink={removeLink} key={index} index={index} />
+			<Link
+				url={link}
+				removeLink={removeLink || false}
+				key={index}
+				index={index}
+			/>
 		))}
 	</div>
 );
