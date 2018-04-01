@@ -69,11 +69,11 @@ class Link extends Component {
 }
 
 export class LinkPicker extends Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 		this.state = {
 			value: '',
-			links: []
+			links: props.links || []
 		};
 	}
 	onKeyPress = event => event.key === 'Enter' && this.addLink();

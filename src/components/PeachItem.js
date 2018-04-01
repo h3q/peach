@@ -3,13 +3,14 @@ import React, { Component } from 'react';
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
-import Chip from 'material-ui/Chip';
 
 import FavoriteIcon from 'material-ui/svg-icons/action/favorite';
 import FavoriteBorderIcon from 'material-ui/svg-icons/action/favorite-border';
 import EditIcon from 'material-ui/svg-icons/editor/mode-edit';
 import DoneIcon from 'material-ui/svg-icons/action/done';
 import RemoveIcon from 'material-ui/svg-icons/action/delete';
+
+import LinkPicker, { LinksContainer } from './LinkPicker';
 
 const RemoveButton = ({ onClick }) => (
   <FlatButton secondary icon={<RemoveIcon />} onClick={onClick} />
@@ -69,8 +70,8 @@ class PeachItem extends Component {
   onRemoveButtonClick = () => {
     const { index, remove } = this.props;
     const { peach } = this.state;
-    peach.delete();
     remove(index);
+    peach.delete();
   };
   onEditButtonClick = () => {
     const { peach } = this.state;
@@ -79,71 +80,104 @@ class PeachItem extends Component {
   };
   onTitleChange = event => {
     const { peach } = this.state;
-    peach.description = event.target.value;
+    peach.title = event.target.value;
   };
   onDescriptionChange = event => {
     const { peach } = this.state;
     peach.description = event.target.value;
   };
 
+  renderEditable() {
+    const { user } = this.props;
+    const { peach, authorName, authorPhotoURL } = this.state;
+    const { title, description, likes, links } = peach;
+    const { isLiked, editMode } = this.state;
+
+    return (
+      <Card style={{ margin: 10 }}>
+        <CardText
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-around'
+          }}>
+          <div>
+            <TextField
+              id="editTitle"
+              floatingLabelText="Peach title"
+              onChange={this.onTitleChange}
+              defaultValue={title}
+              underlineShow={true}
+              fullWidth
+            />
+            <TextField
+              id="editDescription"
+              floatingLabelText="Peach description"
+              onChange={this.onDescriptionChange}
+              defaultValue={description}
+              underlineShow={true}
+              multiLine={true}
+              rows={1}
+              rowsMax={5}
+              fullWidth
+            />
+            <LinkPicker links={links} />
+          </div>
+        </CardText>
+
+        <CardActions
+          style={{ display: 'flex', justifyContent: 'space-between' }}>
+          {this.state.isOwned && (
+            <div>
+              <RemoveButton onClick={this.onRemoveButtonClick} />
+              <EditButton
+                onClick={this.onEditButtonClick}
+                editMode={editMode}
+              />
+            </div>
+          )}
+        </CardActions>
+      </Card>
+    );
+  }
+
   render() {
     const { user } = this.props;
     const { peach } = this.state;
     const { id, title, description, likes, links, created, author } = peach;
     const { isLiked, editMode } = this.state;
+
+    if (editMode) {
+      return (
+        <div style={{ order: -likes.length }}>{this.renderEditable()}</div>
+      );
+    }
+
     return (
       <div style={{ order: -likes.length }}>
         <Card style={{ margin: 10 }}>
-          {!this.state.editMode && (
-            <div>
-              <CardHeader
-                title={title}
-                subtitle={this.state.authorName}
-                avatar={this.state.authorPhotoURL}
-                actAsExpander
-                showExpandableButton
-              />
+          <CardHeader
+            title={title}
+            subtitle={this.state.authorName}
+            avatar={this.state.authorPhotoURL}
+            actAsExpander
+            showExpandableButton
+          />
 
-              <CardText style={{ wordBreak: 'break-all' }} expandable={true}>
-                {description}
-              </CardText>
-            </div>
-          )}
-          {this.state.editMode && (
-            <div
-              style={{ margin: 10, display: 'flex', flexDirection: 'column' }}>
-              <TextField
-                onChange={this.onTitleChange}
-                defaultValue={title}
-                underlineShow={true}
-              />
-              <TextField
-                onChange={this.onDescriptionChange}
-                defaultValue={description}
-                underlineShow={true}
-                multiLine={true}
-                rows={1}
-                rowsMax={5}
-              />
-            </div>
-          )}
+          <CardText style={{ wordBreak: 'break-all' }} expandable={true}>
+            {description}
+          </CardText>
+
+          <LinksContainer links={links} />
+
           <CardActions
             style={{ display: 'flex', justifyContent: 'space-between' }}>
             {this.state.isOwned && (
               <div>
-                <RemoveButton onClick={this.onRemoveButtonClick} />
-                {!this.state.editMode && (
-                  <EditButton
-                    onClick={this.onEditButtonClick}
-                    editMode={editMode}
-                  />
-                )}
-                {this.state.editMode && (
-                  <EditButton
-                    onClick={this.onEditButtonClick}
-                    editMode={editMode}
-                  />
-                )}
+                <EditButton
+                  onClick={this.onEditButtonClick}
+                  editMode={editMode}
+                />
               </div>
             )}
             <LikeButton

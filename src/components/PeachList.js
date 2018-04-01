@@ -15,87 +15,85 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import Page from './Page';
 
 export class PeachList extends Component {
-	constructor() {
-		super();
-		this.state = {
-			open: false,
-			peaches: []
-		};
-	}
+  constructor() {
+    super();
+    this.state = {
+      open: false,
+      peaches: []
+    };
+  }
 
-	static contextTypes = {
-		muiTheme: PropTypes.object
-	};
+  static contextTypes = {
+    muiTheme: PropTypes.object
+  };
 
-	static propTypes = {
-		user: PropTypes.object
-	};
+  static propTypes = {
+    user: PropTypes.object
+  };
 
-	handleOpen = () => {
-		this.setState({ open: true });
-	};
-	handleClose = () => {
-		this.setState({ open: false });
-	};
+  handleOpen = () => {
+    this.setState({ open: true });
+  };
+  handleClose = () => {
+    this.setState({ open: false });
+  };
 
-	componentWillMount = () => {
-		fetchAllPeach().then(peaches => {
-			this.setState({ peaches: peaches });
-		});
-	};
+  componentWillMount = () => {
+    fetchAllPeach().then(peaches => {
+      this.setState({ peaches: peaches });
+    });
+  };
 
-	addPeach = peach =>
-		this.setState(({ peaches }) => ({ peaches: [...peaches, peach] }));
+  addPeach = peach =>
+    this.setState(({ peaches }) => ({ peaches: [...peaches, peach] }));
 
-	removePeach = removed =>
-		this.setState(({ peaches }) => ({
-			peaches: peaches.filter((peach, index) => index !== removed)
-		}));
+  removePeach = removed =>
+    this.setState(({ peaches }) => ({
+      peaches: peaches.filter((peach, index) => index !== removed)
+    }));
 
-	render() {
-		const { user } = this.props;
-		const { peaches } = this.state;
+  render() {
+    const { user } = this.props;
+    const { peaches } = this.state;
 
-		return (
-			<Page>
-				<Toolbar
-					style={{
-						justifyContent: 'flex-end',
-						backgroundColor: this.context.muiTheme.palette.primary2Color
-					}}
-				>
-					<ToolbarGroup>
-						<FloatingActionButton
-							onClick={this.handleOpen}
-							secondary
-							style={{ position: 'relative', top: '50%' }}
-						>
-							<ContentAdd />
-						</FloatingActionButton>
-					</ToolbarGroup>
-				</Toolbar>
-				<List className="peaches">
-					{peaches.map((peach, index) => (
-						<PeachItem
-							peach={peach}
-							index={index}
-							key={index}
-							user={user}
-							remove={this.removePeach}
-						/>
-					))}
-				</List>
+    return (
+      <Page>
+        <Toolbar
+          style={{
+            justifyContent: 'flex-end',
+            backgroundColor: this.context.muiTheme.palette.primary2Color
+          }}>
+          <ToolbarGroup>
+            <FloatingActionButton
+              onClick={this.handleOpen}
+              secondary
+              style={{ position: 'relative', top: '50%' }}>
+              <ContentAdd />
+            </FloatingActionButton>
+          </ToolbarGroup>
+        </Toolbar>
+        <List className="peaches">
+          {peaches.map((peach, index) => (
+            <PeachItem
+              peach={peach}
+              index={index}
+              key={index}
+              user={user}
+              remove={this.removePeach}
+            />
+          ))}
+        </List>
 
-				{this.state.open && (
-					<PeachCreator
-						onSubmit={this.addPeach}
-						close={this.handleClose}
-						user={user}
-					/>
-				)}
-			</Page>
-		);
-	}
+        {this.state.open && (
+          <PeachCreator
+            onSubmit={this.addPeach}
+            close={this.handleClose}
+            user={user}
+          />
+        )}
+      </Page>
+    );
+  }
 }
 
 export default PeachList;
