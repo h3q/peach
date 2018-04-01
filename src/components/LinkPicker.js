@@ -72,6 +72,7 @@ export class LinkPicker extends Component {
   onKeyPress = event => event.key === 'Enter' && this.addLink();
 
   addLink = () => {
+    const { onChange } = this.props;
     if (!this.isURL()) return;
     this.setState(
       ({ links }) =>
@@ -80,6 +81,7 @@ export class LinkPicker extends Component {
           value: ''
         }
     );
+    onChange(this.state.links);
   };
   removeLink = removedIndex =>
     this.setState(({ links }) => ({

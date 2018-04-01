@@ -41,6 +41,7 @@ class PeachCreator extends Component {
 	onTitleChange = event => this.setState({ title: event.target.value });
 	onDescriptionChange = event =>
 		this.setState({ description: event.target.value });
+	onLinksChange = links => this.setState({ links });
 
 	render() {
 		const { close } = this.props;
