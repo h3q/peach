@@ -9,35 +9,14 @@ import Chip from 'material-ui/Chip';
 
 import { fullWhite } from 'material-ui/styles/colors';
 
-const URL_PATTERN = new RegExp(
-	'^(https?:\\/\\/)?' + // protocol
-	'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
-	'((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-	'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-	'(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-		'(\\#[-a-z\\d_]*)?$',
-	'i'
-);
-
-export const LinksContainer = ({ links, removeLink }) => (
-	<div style={{ display: 'flex', flexWrap: 'wrap', maxHeight: 100 }}>
-		{links.map((link, index) => (
-			<Link
-				url={link}
-				removeLink={removeLink || false}
-				key={index}
-				index={index}
-			/>
-		))}
-	</div>
-);
+import isURL from '../utils/isURL';
 
 class Link extends Component {
-	onRemove = () => this.props.removeLink(this.props.index);
-
 	static contextTypes = {
 		muiTheme: PropTypes.object
 	};
+
+	removeLink = () => this.props.removeLink(this.props.url);
 
 	getShortenedURL = () => {
 		const { url } = this.props;
@@ -46,13 +25,14 @@ class Link extends Component {
 		}
 		return `${url.slice(0, 6)}..${url.slice(-6)}`;
 	};
+	isRemovable = () => !!this.props.removeLink;
 	render() {
 		const { url } = this.props;
 		return (
 			<Chip
 				backgroundColor={this.context.muiTheme.palette.accent1Color}
 				labelColor={fullWhite}
-				onRequestDelete={this.onRemove}
+				onRequestDelete={this.isRemovable() ? this.removeLink : null}
 				deleteIconStyle={{ fill: fullWhite }}
 				style={{ margin: 4 }}
 			>
@@ -68,49 +48,57 @@ class Link extends Component {
 	}
 }
 
+export const LinksContainer = ({ links, removeLink }) => (
+	<div style={{ display: 'flex', flexWrap: 'wrap', maxHeight: 100 }}>
+		{links.map(link => <Link url={link} removeLink={removeLink} key={link} />)}
+	</div>
+);
+
 export class LinkPicker extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			value: '',
-			links: props.links || []
+			value: ''
 		};
 	}
+
+	resetValue = () =>
+		this.setState({
+			value: ''
+		});
+
 	onKeyPress = event => event.key === 'Enter' && this.addLink();
 
 	addLink = () => {
-		const { onChange } = this.props;
-		if (!this.isURL()) return;
-		this.setState(
-			({ links }) =>
-				links.indexOf(this.state.value) < 0 && {
-					links: [...links, this.state.value],
-					value: ''
-				}
-		);
-		onChange(this.state.links);
+		const { addLink, links } = this.props;
+		const { value } = this.state;
+		if (!isURL() || links.indexOf(value) > -1) {
+			return;
+		}
+		this.resetValue();
+		addLink(value);
 	};
-	removeLink = removedIndex =>
-		this.setState(({ links }) => ({
-			links: links.filter((link, index) => removedIndex !== index)
-		}));
+	removeLink = removed => {
+		this.props.removeLink(removed);
+		this.ref.focus();
+	};
 
 	onURLChange = event => this.setState({ value: event.target.value });
 
-	isURL = () => URL_PATTERN.test(this.state.value);
-
 	render() {
-		const { value, links } = this.state;
+		const { value } = this.state;
+		const { links } = this.props;
 		return (
 			<div>
 				<div style={{ display: 'flex', width: '100%', alignItems: 'flex-end' }}>
 					<TextField
+						ref={ref => Object.assign(this, { ref })}
 						style={{ flex: 1 }}
 						floatingLabelText="URL"
 						onChange={this.onURLChange}
 						onKeyPress={this.onKeyPress}
 						value={value}
-						errorText={value && !this.isURL(value) && 'Not valid URL'}
+						errorText={value && !isURL(value) && 'Not valid URL'}
 					/>
 					<FlatButton
 						secondary

@@ -41,7 +41,14 @@ class PeachCreator extends Component {
 	onTitleChange = event => this.setState({ title: event.target.value });
 	onDescriptionChange = event =>
 		this.setState({ description: event.target.value });
-	onLinksChange = links => this.setState({ links });
+
+	addLink = added =>
+		this.setState(({ links }) => ({ links: [...links, added] }));
+
+	removeLink = removed =>
+		this.setState(({ links }) => ({
+			links: links.filter(link => link !== removed)
+		}));
 
 	render() {
 		const { close } = this.props;
@@ -86,7 +93,11 @@ class PeachCreator extends Component {
 						rows={1}
 						rowsMax={5}
 					/>
-					<LinkPicker onChange={this.onLinksChange} />
+					<LinkPicker
+						links={this.state.links}
+						addLink={this.addLink}
+						removeLink={this.removeLink}
+					/>
 				</div>
 			</Dialog>
 		);
